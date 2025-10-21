@@ -1,7 +1,8 @@
 import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as cron from 'cron';
-import { TokenBatchService } from './token-batch.service';
+import { DomainBatchService } from './modules/batch/batch.service';
+import { SynchronizationResiliencer } from './modules/synchronization/synchronization.resiliencer';
 
 @Injectable()
 export class SchedulerService implements OnApplicationBootstrap {
@@ -9,14 +10,14 @@ export class SchedulerService implements OnApplicationBootstrap {
   private job: cron.CronJob | null = null;
 
   constructor(
-    private readonly tokenBatchService: TokenBatchService,
+    private readonly domainBatchService: DomainBatchService,
+    private readonly synchronizationResiliencer: SynchronizationResiliencer,
     private readonly configService: ConfigService,
   ) {}
 
   async onApplicationBootstrap() {
     const enabled = this.configService.get<boolean>('scheduler.enabled');
-    const cronExpression =
-      this.configService.get<string>('scheduler.cronExpression') || '*/5 * * * * *';
+    const cronExpression = this.configService.get<string>('scheduler.cronExpression') || '*/5 * * * * *';
 
     if (enabled) {
       this.setupCronJob(cronExpression);
@@ -33,7 +34,10 @@ export class SchedulerService implements OnApplicationBootstrap {
   }
 
   async handleCron() {
+    this.logger.log('Starting domain synchronization...');
+    await this.synchronizationResiliencer.sync();
+
     this.logger.log('Preparing and sending token batches...');
-    await this.tokenBatchService.sendTokenBatch();
+    await this.domainBatchService.sendDomainBatch();
   }
 }

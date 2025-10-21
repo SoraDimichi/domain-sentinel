@@ -3,20 +3,22 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 import { getDatabaseConfig } from './config/database.config';
-import { TokenBatchModule } from './modules/token-batch/token-batch.module';
-import { DomainModule } from './modules/domain/domain.module';
-import { DomainsFetcherModule } from './modules/domains-fetcher/domains-fetcher.module';
+import { BatchModule } from './modules/batch/batch.module';
+import { DomainRepositoryModule } from './modules/repository/domain.module';
+import { SynchronizationModule } from './modules/synchronization/synchronization.module';
 import { HealthController } from './health.controller';
+import { SchedulerService } from './scheduler';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     ScheduleModule.forRoot(),
     TypeOrmModule.forRootAsync(getDatabaseConfig()),
-    TokenBatchModule,
-    DomainModule,
-    DomainsFetcherModule,
+    BatchModule,
+    DomainRepositoryModule,
+    SynchronizationModule,
   ],
   controllers: [HealthController],
+  providers: [SchedulerService],
 })
 export class AppModule {}
