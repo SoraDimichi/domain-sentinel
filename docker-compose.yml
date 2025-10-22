@@ -47,6 +47,50 @@ services:
       - DATABASE_NAME=tokens
       - KAFKA_BROKERS=kafka:9093
 
+  domain-sentinel-chrome:
+    build:
+      context: .
+      dockerfile: apps/domain-sentinel-chrome/Dockerfile
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    ports:
+      - '3001:3001'
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/domain_sentinel
+      - KAFKA_BROKERS=kafka:9093
+
+  domain-sentinel-webkit:
+    build:
+      context: .
+      dockerfile: apps/domain-sentinel-webkit/Dockerfile
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    ports:
+      - '3002:3002'
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/domain_sentinel
+      - KAFKA_BROKERS=kafka:9093
+
+  telegram-notifier:
+    build:
+      context: .
+      dockerfile: apps/telegram-notifier/Dockerfile
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - '3003:3003'
+    environment:
+      - KAFKA_BROKERS=kafka:9093
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+
   postgres:
     image: postgres:15-alpine
     container_name: token-price-postgres
@@ -60,6 +104,19 @@ services:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mongodb:
+    image: mongo:6.0
+    container_name: domain-sentinel-mongodb
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -118,3 +175,4 @@ services:
 
 volumes:
   postgres-data:
+  mongodb-data:

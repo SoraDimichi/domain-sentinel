@@ -27,7 +27,7 @@ export class SchedulerService implements OnApplicationBootstrap {
   }
 
   private setupCronJob(cronExpression: string) {
-    this.job = new cron.CronJob(cronExpression, () => this.handleCron());
+    this.job = new cron.CronJob(cronExpression, this.handleCron);
 
     this.job.start();
     this.logger.log(`Price update scheduler started with cron expression: ${cronExpression}`);
