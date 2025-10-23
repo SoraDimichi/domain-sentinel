@@ -11,30 +11,36 @@
       "sourceRoot": "apps/scheduler/src",
       "compilerOptions": {
         "tsConfigPath": "apps/scheduler/tsconfig.app.json",
-        "assets": [
-          {
-            "include": "/migrations",
-            "outDir": "dist/migrations",
-            "watchAssets": true
-          }
-        ],
         "watchAssets": true
       }
     },
-    "updater": {
+    "telegram-notifier": {
       "type": "application",
-      "root": "apps/updater",
+      "root": "apps/telegram-notifier",
       "entryFile": "main",
-      "sourceRoot": "apps/updater/src",
+      "sourceRoot": "apps/telegram-notifier/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/updater/tsconfig.app.json",
-        "assets": [
-          {
-            "include": "/migrations",
-            "outDir": "dist/migrations",
-            "watchAssets": true
-          }
-        ],
+        "tsConfigPath": "apps/telegram-notifier/tsconfig.app.json",
+        "watchAssets": true
+      }
+    },
+    "webkit": {
+      "type": "application",
+      "root": "apps/webkit",
+      "entryFile": "main",
+      "sourceRoot": "apps/webkit/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/webkit/tsconfig.app.json",
+        "watchAssets": true
+      }
+    },
+    "chrome": {
+      "type": "application",
+      "root": "apps/chrome",
+      "entryFile": "main",
+      "sourceRoot": "apps/chrome/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/chrome/tsconfig.app.json",
         "watchAssets": true
       }
     }

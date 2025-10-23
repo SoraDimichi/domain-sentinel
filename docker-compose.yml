@@ -5,52 +5,23 @@ services:
     build:
       context: .
       dockerfile: apps/scheduler/Dockerfile
-    container_name: token-scheduler-service
+    container_name: scheduler-service
     depends_on:
-      postgres:
-        condition: service_healthy
       kafka:
         condition: service_healthy
     ports:
       - '3002:3002'
     environment:
-      - DATABASE_HOST=postgres
-      - DATABASE_PORT=5432
-      - DATABASE_USERNAME=postgres
-      - DATABASE_PASSWORD=postgres
-      - DATABASE_NAME=tokens
       - KAFKA_BROKERS=kafka:9093
-      - PRICE_UPDATE_CRON=*/5 * * * * *
+      - PRICE_UPDATE_CRON=*/5 * * * *
       - PRICE_UPDATE_ENABLED=true
       - BATCH_SIZE=2
+      - MONGODB_URI=mongodb://mongodb:27017/domain_sentinel
 
-  updater:
+  chrome:
     build:
       context: .
-      dockerfile: apps/updater/Dockerfile
-    deploy:
-      replicas: 3
-    depends_on:
-      postgres:
-        condition: service_healthy
-      kafka:
-        condition: service_healthy
-      scheduler:
-        condition: service_started
-    expose:
-      - '3001'
-    environment:
-      - DATABASE_HOST=postgres
-      - DATABASE_PORT=5432
-      - DATABASE_USERNAME=postgres
-      - DATABASE_PASSWORD=postgres
-      - DATABASE_NAME=tokens
-      - KAFKA_BROKERS=kafka:9093
-
-  domain-sentinel-chrome:
-    build:
-      context: .
-      dockerfile: apps/domain-sentinel-chrome/Dockerfile
+      dockerfile: apps/chrome/Dockerfile
     depends_on:
       mongodb:
         condition: service_healthy
@@ -62,17 +33,17 @@ services:
       - MONGODB_URI=mongodb://mongodb:27017/domain_sentinel
       - KAFKA_BROKERS=kafka:9093
 
-  domain-sentinel-webkit:
+  webkit:
     build:
       context: .
-      dockerfile: apps/domain-sentinel-webkit/Dockerfile
+      dockerfile: apps/webkit/Dockerfile
     depends_on:
       mongodb:
         condition: service_healthy
       kafka:
         condition: service_healthy
     ports:
-      - '3002:3002'
+      - '3004:3002'
     environment:
       - MONGODB_URI=mongodb://mongodb:27017/domain_sentinel
       - KAFKA_BROKERS=kafka:9093
@@ -88,42 +59,25 @@ services:
       - '3003:3003'
     environment:
       - KAFKA_BROKERS=kafka:9093
-      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
-
-  postgres:
-    image: postgres:15-alpine
-    container_name: token-price-postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: tokens
-    ports:
-      - '5432:5432'
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres']
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      - TELEGRAM_BOT_TOKEN=8388900730:AAF93QAQ8yYW4bdLr4JSzJyQyJ0yQQILRjw
+      - TELEGRAM_CHAT_ID=-1003192364233
 
   mongodb:
     image: mongo:6.0
     container_name: domain-sentinel-mongodb
     ports:
-      - '27017:27017'
+      - '27018:27017'
     volumes:
       - mongodb-data:/data/db
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
       interval: 5s
       timeout: 5s
       retries: 5
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
-    container_name: token-price-zookeeper
+    container_name: domain-sentinel-zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -132,7 +86,7 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:7.3.0
-    container_name: token-price-kafka
+    container_name: domain-sentinel-kafka
     depends_on:
       - zookeeper
     ports:
@@ -145,34 +99,33 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
-      KAFKA_NUM_PARTITIONS: 3
+      KAFKA_NUM_PARTITIONS: 1
       KAFKA_DEFAULT_REPLICATION_FACTOR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 500
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
       KAFKA_GROUP_MAX_SESSION_TIMEOUT_MS: 60000
-      KAFKA_GROUP_MIN_SESSION_TIMEOUT_MS: 10000
+      KAFKA_GROUP_MIN_SESSION_TIMEOUT_MS: 6000
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_OFFSET_RESET: 'earliest'
     healthcheck:
       test:
-        [
-          'CMD-SHELL',
-          "kafka-topics --bootstrap-server localhost:9092 --list 2>&1 | grep -qv 'CoordinatorNotAvailableException'",
-        ]
+        ['CMD-SHELL', "kafka-topics --bootstrap-server localhost:9092 --list 2>&1 | grep -qv 'CoordinatorNotAvailableException'"]
       interval: 10s
       timeout: 10s
       retries: 5
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
-    container_name: token-price-kafka-ui
+    container_name: domain-sentinel-kafka-ui
     depends_on:
       kafka:
         condition: service_healthy
     ports:
       - '8080:8080'
     environment:
-      - KAFKA_CLUSTERS_0_NAME=token-price-cluster
+      - KAFKA_CLUSTERS_0_NAME=domain-sentinel-cluster
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9093
       - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
 
 volumes:
-  postgres-data:
   mongodb-data:

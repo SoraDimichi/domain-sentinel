@@ -4,6 +4,10 @@ import { Controller, Get } from '@nestjs/common';
 export class HealthController {
   @Get()
   check() {
-    return { status: 'ok', service: 'telegram-notifier', timestamp: new Date().toISOString() };
+    return {
+      status: 'ok',
+      service: 'chrome',
+      timestamp: new Date().toISOString(),
+    };
   }
 }

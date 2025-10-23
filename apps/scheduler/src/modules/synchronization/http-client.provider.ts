@@ -16,7 +16,6 @@ export class HttpClientProvider {
   private readonly defaultHeaders: Record<string, string>;
 
   constructor(private readonly configService: ConfigService) {
-    this.baseURL = this.configService.get<string>('API_BASE_URL', 'https://dummyjson.com');
     this.timeout = this.configService.get<number>('API_TIMEOUT', 5000);
     this.defaultHeaders = {
       'Content-Type': 'application/json',
@@ -25,16 +24,14 @@ export class HttpClientProvider {
 
   private async validateData<T>(schema: z.ZodType<T>, response: Response) {
     const data: unknown = await response.json();
+    console.log(data);
     return await schema.parseAsync(data);
   }
 
   private async handleResponse<T>(response: Response, schema: z.ZodType<T>) {
     if (!response.ok) {
       const d = await this.validateData(errorSchema, response);
-      throw new HttpException(
-        d?.message || `Request failed with status ${response.status}`,
-        response.status,
-      );
+      throw new HttpException(d?.message || `Request failed with status ${response.status}`, response.status);
     }
 
     return this.validateData(schema, response);
@@ -46,14 +43,12 @@ export class HttpClientProvider {
       headers: { ...this.defaultHeaders, ...options.headers },
     };
 
-    const fullUrl = this.baseURL ? `${this.baseURL}${url.startsWith('/') ? url : `/${url}`}` : url;
-
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), options.timeout ?? this.timeout);
 
     try {
       const { signal } = controller;
-      const response = await fetch(fullUrl, { ...mergedOptions, signal });
+      const response = await fetch(url, { ...mergedOptions, signal });
       return await this.handleResponse(response, schema);
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') {

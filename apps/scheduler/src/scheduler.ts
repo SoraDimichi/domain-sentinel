@@ -17,7 +17,7 @@ export class SchedulerService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap() {
     const enabled = this.configService.get<boolean>('scheduler.enabled');
-    const cronExpression = this.configService.get<string>('scheduler.cronExpression') || '*/5 * * * * *';
+    const cronExpression = this.configService.get<string>('scheduler.cronExpression') || '*/5 * * * *';
 
     if (enabled) {
       this.setupCronJob(cronExpression);
@@ -27,7 +27,7 @@ export class SchedulerService implements OnApplicationBootstrap {
   }
 
   private setupCronJob(cronExpression: string) {
-    this.job = new cron.CronJob(cronExpression, this.handleCron);
+    this.job = new cron.CronJob(cronExpression, this.handleCron.bind(this));
 
     this.job.start();
     this.logger.log(`Price update scheduler started with cron expression: ${cronExpression}`);
