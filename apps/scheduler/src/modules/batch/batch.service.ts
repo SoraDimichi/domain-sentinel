@@ -15,7 +15,7 @@ export class DomainBatchService {
     private readonly configService: ConfigService,
     private readonly domainBatchProducer: DomainBatchProducer,
   ) {
-    this.batchSize = this.configService.get<number>('scheduler.batchSize', 2);
+    this.batchSize = this.configService.get<number>('scheduler.batchSize', 10);
   }
 
   private async fetchAndSendBatch(batchIndex: number, batchCount: number): Promise<number> {

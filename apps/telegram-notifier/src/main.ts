@@ -6,10 +6,8 @@ import { TelegramNotifierModule } from './telegram-notifier.module';
 async function bootstrap() {
   const logger = new Logger('TelegramNotifier');
 
-  // Create the NestJS application
   const app = await NestFactory.create(TelegramNotifierModule);
 
-  // Connect to Kafka as a microservice
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,
     options: {
@@ -23,10 +21,8 @@ async function bootstrap() {
     },
   });
 
-  // Start the microservice
   await app.startAllMicroservices();
 
-  // Start the HTTP server
   await app.listen(3003);
 
   logger.log(`Telegram Notifier microservice is running on port 3003`);

@@ -24,23 +24,13 @@
         "watchAssets": true
       }
     },
-    "webkit": {
+    "browser-agnostic": {
       "type": "application",
-      "root": "apps/webkit",
+      "root": "apps/browser-agnostic",
       "entryFile": "main",
-      "sourceRoot": "apps/webkit/src",
+      "sourceRoot": "apps/browser-agnostic/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/webkit/tsconfig.app.json",
-        "watchAssets": true
-      }
-    },
-    "chrome": {
-      "type": "application",
-      "root": "apps/chrome",
-      "entryFile": "main",
-      "sourceRoot": "apps/chrome/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/chrome/tsconfig.app.json",
+        "tsConfigPath": "apps/browser-agnostic/tsconfig.app.json",
         "watchAssets": true
       }
     }

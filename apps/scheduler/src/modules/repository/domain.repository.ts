@@ -53,7 +53,6 @@ export class DomainRepository {
       return result.length;
     } catch (error) {
       this.logger.error(`Error in bulkCreate: ${error.message}`);
-      // If some documents were inserted before the error, return that count
       return error.insertedDocs?.length || 0;
     }
   }

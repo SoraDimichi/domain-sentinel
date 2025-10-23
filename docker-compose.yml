@@ -15,38 +15,44 @@ services:
       - KAFKA_BROKERS=kafka:9093
       - PRICE_UPDATE_CRON=*/5 * * * *
       - PRICE_UPDATE_ENABLED=true
-      - BATCH_SIZE=2
+      - BATCH_SIZE=10
       - MONGODB_URI=mongodb://mongodb:27017/domain_sentinel
 
-  chrome:
+  browser-agnostic-chrome:
     build:
       context: .
-      dockerfile: apps/chrome/Dockerfile
+      dockerfile: apps/browser-agnostic/Dockerfile
     depends_on:
       mongodb:
         condition: service_healthy
       kafka:
         condition: service_healthy
     ports:
-      - '3001:3001'
+      - '3005:3005'
     environment:
       - MONGODB_URI=mongodb://mongodb:27017/domain_sentinel
       - KAFKA_BROKERS=kafka:9093
+      - BROWSER_TYPE=chrome
+      - CLIENT_ID=browser-agnostic-chrome
+      - CONSUMER_GROUP_ID=browser-agnostic-chrome-consumer
 
-  webkit:
+  browser-agnostic-webkit:
     build:
       context: .
-      dockerfile: apps/webkit/Dockerfile
+      dockerfile: apps/browser-agnostic/Dockerfile
     depends_on:
       mongodb:
         condition: service_healthy
       kafka:
         condition: service_healthy
     ports:
-      - '3004:3002'
+      - '3006:3005'
     environment:
       - MONGODB_URI=mongodb://mongodb:27017/domain_sentinel
       - KAFKA_BROKERS=kafka:9093
+      - BROWSER_TYPE=webkit
+      - CLIENT_ID=browser-agnostic-webkit
+      - CONSUMER_GROUP_ID=browser-agnostic-webkit-consumer
 
   telegram-notifier:
     build:
