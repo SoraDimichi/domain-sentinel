@@ -97,6 +97,41 @@ The application is configured through environment variables in the docker-compos
 - **Browser Settings**: Browser types and configurations
 - **Telegram Notifications**: Bot token and chat ID
 
+## Secrets Configuration Guide
+
+### Telegram Notifier Secrets
+
+The Telegram notifier service requires the following environment variables:
+
+- **TELEGRAM_BOT_TOKEN**: Your Telegram bot token obtained from BotFather
+  - Required for the Telegram notifier service to authenticate with the Telegram API
+  - Example: `5555555555:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA`
+  - How to obtain:
+    1. Message [@BotFather](https://t.me/BotFather) on Telegram
+    2. Create a new bot using the `/newbot` command
+    3. Copy the token provided by BotFather
+
+- **TELEGRAM_CHAT_ID**: The chat ID where notifications will be sent
+  - Can be a group chat ID or individual user ID
+  - Example: `-1003192364231`
+  - How to obtain:
+    1. Add your bot to the desired group or start a private chat with it
+    2. Send a message in the chat
+    3. Access `https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates`
+    4. Find the `chat` object and copy the `id` value
+
+### Scheduler Service Secrets
+
+The scheduler service requires the following environment variables:
+
+- **API_KEY**: Authentication key for the external API
+  - Required for the scheduler to authenticate with the domain API
+  - Example: `your-api-key-here`
+
+- **API_ENDPOINT**: URL of the external API for domain synchronization
+  - Default: `https://hor.info/admin_api/v1/domains`
+  - Example: `https://your-domain-api.example.com/v1/domains`
+
 ## Development
 
 ### Building and Testing
