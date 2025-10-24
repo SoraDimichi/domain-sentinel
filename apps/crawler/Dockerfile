@@ -8,7 +8,7 @@ RUN npm ci
 
 COPY . .
 
-RUN npm run build browser-agnostic
+RUN npm run build crawler
 
 EXPOSE 3005
 CMD ["node", "dist/apps/browser-agnostic/main"]

@@ -19,7 +19,7 @@ Domain Sentinel is a microservice-based application designed to detect security 
 The system consists of several microservices:
 
 - **Scheduler**: Manages domain checking schedules and distributes batches of domains
-- **Browser Agnostic Services**: Process domains using Playwright with Chrome and WebKit
+- **Browser Agnostic Crawler service**: Process domains using Playwright with Chrome or WebKit
 - **Telegram Notifier**: Sends notifications when security warnings are detected
 
 ```mermaid

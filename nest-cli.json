@@ -24,13 +24,13 @@
         "watchAssets": true
       }
     },
-    "browser-agnostic": {
+    "crawler": {
       "type": "application",
-      "root": "apps/browser-agnostic",
+      "root": "apps/crawler",
       "entryFile": "main",
-      "sourceRoot": "apps/browser-agnostic/src",
+      "sourceRoot": "apps/crawler/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/browser-agnostic/tsconfig.app.json",
+        "tsConfigPath": "apps/crawler/tsconfig.app.json",
         "watchAssets": true
       }
     }
