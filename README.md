@@ -38,8 +38,8 @@ graph TB
     Scheduler[Scheduler Service]:::scheduler
 
     %% Browser Services
-    ChromeService[Browser Agnostic Chrome]:::browser
-    WebKitService[Browser Agnostic WebKit]:::browser
+    ChromeService[Browser Chrome]:::browser
+    WebKitService[Browser WebKit]:::browser
 
     %% Notification Service
     TelegramNotifier[Telegram Notifier]:::notification
