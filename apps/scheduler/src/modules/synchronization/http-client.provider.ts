@@ -24,7 +24,6 @@ export class HttpClientProvider {
 
   private async validateData<T>(schema: z.ZodType<T>, response: Response) {
     const data: unknown = await response.json();
-    console.log(data);
     return await schema.parseAsync(data);
   }
 

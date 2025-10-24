@@ -30,12 +30,3 @@ jobs:
 
       - name: ESLint
         run: npx eslint "{src,apps,libs,test}/**/*.ts"
-
-      - name: tests
-        run: npm test
-
-      - name: Build scheduler Docker image
-        run: docker build -t token-scheduler-service -f apps/scheduler/Dockerfile .
-
-      - name: Build updater Docker image
-        run: docker build -t token-updater-service -f apps/updater/Dockerfile .

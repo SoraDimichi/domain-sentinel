@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { HttpClientProvider } from './http-client.provider';
 import { DomainRepository } from '../repository/domain.repository';
 import { z } from 'zod';
@@ -9,14 +10,18 @@ const domainsApiResponseSchema = z.array(domainSchema);
 @Injectable()
 export class SynchronizationService {
   private readonly logger = new Logger(SynchronizationService.name);
-  private readonly apiKey = '16f64a5c0fabf9280f68eb708eb85a63';
-  private readonly apiEndpoint = 'https://horcrux.info/admin_api/v1/domains';
+  private readonly apiKey: string;
+  private readonly apiEndpoint: string;
   private lastSuccessfulFetch: DomainData[] = [];
 
   constructor(
     private readonly httpClient: HttpClientProvider,
     private readonly repository: DomainRepository,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.apiKey = this.configService.get<string>('scheduler.apiKey') || 'api-key';
+    this.apiEndpoint = this.configService.get<string>('scheduler.apiEndpoint') || 'https://hor.info/admin_api/v1/domains';
+  }
 
   async fetchDomains(): Promise<void> {
     try {

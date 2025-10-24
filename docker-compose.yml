@@ -17,6 +17,8 @@ services:
       - PRICE_UPDATE_ENABLED=true
       - BATCH_SIZE=10
       - MONGODB_URI=mongodb://mongodb:27017/domain_sentinel
+      - API_KEY=api-key
+      - API_ENDPOINT=https://hor.info/admin_api/v1/domains
 
   browser-agnostic-chrome:
     build:
@@ -65,8 +67,8 @@ services:
       - '3003:3003'
     environment:
       - KAFKA_BROKERS=kafka:9093
-      - TELEGRAM_BOT_TOKEN=8388900730:AAF93QAQ8yYW4bdLr4JSzJyQyJ0yQQILRjw
-      - TELEGRAM_CHAT_ID=-1003192364233
+      - TELEGRAM_BOT_TOKEN=telegram-bot-token
+      - TELEGRAM_CHAT_ID=chat-id
 
   mongodb:
     image: mongo:6.0

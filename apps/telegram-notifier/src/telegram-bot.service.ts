@@ -12,7 +12,7 @@ export class TelegramBotService {
     @InjectBot() private readonly bot: Telegraf,
     private readonly configService: ConfigService,
   ) {
-    this.chatId = this.configService.get<string>('TELEGRAM_CHAT_ID', '-1003192364233');
+    this.chatId = this.configService.get<string>('TELEGRAM_CHAT_ID', '-1003192364231');
 
     if (!this.chatId) this.logger.warn('TELEGRAM_CHAT_ID is not set. Notifications will not be sent.');
   }
