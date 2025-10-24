@@ -96,3 +96,4 @@ This will send a test domain warning message to Kafka, which will be picked up b
     "browserType": "webkit",
     "timestamp": "2025-10-22T17:17:00.000Z"
   }
+  ```

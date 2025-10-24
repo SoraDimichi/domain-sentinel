@@ -14,10 +14,13 @@ export const getPlaywrightConfig = (): DynamicModule => {
           const browserType = configService.get<BrowserType>('BROWSER_TYPE') || BrowserType.CHROME;
           const browserName = browserType === BrowserType.CHROME ? 'ChromeBrowser' : 'WebKitBrowser';
 
-          return PlaywrightModule.forRoot({
-            isGlobal: true,
-            headless: true,
-          }, browserName);
+          return PlaywrightModule.forRoot(
+            {
+              isGlobal: true,
+              headless: true,
+            },
+            browserName,
+          );
         },
         inject: [ConfigService],
       },

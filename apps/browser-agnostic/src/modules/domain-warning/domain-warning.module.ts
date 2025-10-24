@@ -4,11 +4,7 @@ import { DomainWarningFeed, DomainWarningFeedSchema } from './models/domain-warn
 import { DomainWarningFeedRepository } from './repository/domain-warning-feed.repository';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: DomainWarningFeed.name, schema: DomainWarningFeedSchema },
-    ]),
-  ],
+  imports: [MongooseModule.forFeature([{ name: DomainWarningFeed.name, schema: DomainWarningFeedSchema }])],
   providers: [DomainWarningFeedRepository],
   exports: [DomainWarningFeedRepository],
 })

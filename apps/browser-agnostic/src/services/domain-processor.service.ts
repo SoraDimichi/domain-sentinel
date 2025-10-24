@@ -31,11 +31,7 @@ export class DomainProcessorService {
       await this.domainWarningFeedRepository.upsert(domain.id, hasWarning);
 
       if (hasWarning) {
-        await this.domainWarningProducer.publishDomainWarning(
-          { id: domain.id, name: domain.name },
-          hasWarning,
-          this.browserType
-        );
+        await this.domainWarningProducer.publishDomainWarning({ id: domain.id, name: domain.name }, hasWarning, this.browserType);
       }
 
       this.logger.log({
